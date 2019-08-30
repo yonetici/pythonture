@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+
+<div class="container">
+    {% block doldur %}
+    <div class="jumbotron text-center">
+        <h3>Flask öğrenme bloguma hoşgeldiniz.</h3>
+        <p> <b>Eratosthenes'in Elemesi</b> <br>
+                Bu yöntemde, 3'den verilen sayıya kadar olan tek sayılar bir listede toplanır. Daha sonra, 3'er 3'er atlanarak, üzerine gelinen sayılar 0'a eşitlenir. Böylece, 3'ün katları elenmiş olur. Daha sonra, ilk 0 olmayan sayı kadar atlanarak üzerine gelinen sayılar 0'a eşitlenir. Böylece, o sayının da katları elenmiş olur. Bu şekilde, en büyük sayının kareköküne kadar devam edilir. Biraz önce bahsettiğimiz gibi, bir sayının kendi karekökünden büyük asal böleni olamaz. Ve, bu sayının karekökü, listedeki bütün sayıların karekökünden büyüktür. Dolayısıyla, bu sayının kareköküne ulaşıldığında, elemeye son verilebilir.</p>
+    </div>
+    <ul>
+    {% for i in numbers %}
+        <li>{{i.id}} : {{i.title}}<br>{{i.content}}</li>    
+    {% endfor %}
+    </ul>
+    {% endblock doldur %}
+</div>
