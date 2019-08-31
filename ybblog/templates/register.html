@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block doldur %}
+<h3> Kayıt olun </h3><hr>
+{% from "includes/_formhelpers.html" import render_field %}
+<form method=post>
+  <dl>
+    {{ render_field(form.name, class="form-control") }}
+    {{ render_field(form.username, class="form-control") }}
+    {{ render_field(form.email, class="form-control") }}
+    {{ render_field(form.password, class="form-control") }}
+    {{ render_field(form.confirm, class="form-control") }}
+    {{ render_field(form.accept_tos, class="form-control") }}
+  </dl>
+  <p><button type="submit" class="btn btn-primary">Kayıt</button>
+
+</form>
+
+
+{% endblock doldur %}
