@@ -13,12 +13,24 @@
             </li>
         </ul>
         <ul class="navbar-nav ml-auto">
+            {% if session["logged_in"] %}
+                <li class="nav-item">
+                        <a class="nav-link" href="dashboard">Kontrol Paneli</a>
+                </li>           
+                <li class="nav-item">
+                        <a class="nav-link" name="Giriş">Hoşgeldin {{session["username"]}}</a>
+                </li>           
+                <li class="nav-item">
+                        <a class="nav-link" href="logout">Çıkış Yap</a>
+                </li>           
+            {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="register">Kayıt ol</a>
                 </li>
                 <li class="nav-item">
                         <a class="nav-link" href="login">Giriş Yapın</a>
-                    </li>
+                </li>
+            {% endif %}
                 </ul>
     
     </div>

@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block doldur %}
+<h3> Giriş Yap </h3>
+<hr>
+{% from "includes/_formhelpers.html" import render_field %}
+<form method = "post">
+    {{ render_field(form.username, class = "form-control") }}
+    {{ render_field(form.password, class = "form-control") }}
+
+<p><button type="submit" class="btn btn-primary">Giriş</button>
+
+</form>
+{% endblock doldur %}
