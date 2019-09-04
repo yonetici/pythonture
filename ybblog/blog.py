@@ -57,6 +57,19 @@ def index():
         {"id":3, "title":"DenemeTitle3","content":"DenemeContent3"}
     ]
     return render_template("index.html", numbers = numbers)
+@app.route("/articles")
+def articles():
+    with sql.connect("./blog.db") as con:
+        cur = con.cursor()
+        cur.execute("select * from articles")
+        rows = cur.fetchall()
+        if rows != None:
+            flash("Makaleler listeleniyor.", "success")
+            return render_template("articles.html", rows = rows)
+        else:
+            flash("Listelemede hata oluştu.", "warning")
+            return render_template("articles.html")
+
 @app.route("/about")
 def about():
     return render_template("about.html")
@@ -85,7 +98,34 @@ class ArticleForm(Form):
 @login_required
 def addarticle():
     form = ArticleForm(request.form)
-    return render_template("addarticle.html", form = form)
+    if request.method == "POST" and form.validate():
+        with sql.connect("./blog.db") as con:
+            try: 
+                cur = con.cursor()
+                title = form.title.data
+                content = form.content.data
+                author = session["username"]
+                cur.execute("INSERT INTO articles (title,author,content) VALUES (?,?,?)", (title,author,content))
+                con.commit()
+                msg = True
+                return redirect(url_for("dashboard"))
+            except sql.IntegrityError as e:
+                con.rollback()
+                msg = False
+                #'sqlite error: ', e.args[0]
+                #msg = "error in insert operation"
+            finally:
+                #return render_template("result.html",msg = msg)
+                if msg == True:
+                    cur.close()
+                    flash("Makale başarıyla eklendi", "success")
+                    return redirect(url_for("addarticle"))       
+                else:
+                    flash("Başarısız işlem","warning")
+                    return redirect(url_for("addarticle"))
+
+    else:
+        return render_template("addarticle.html", form = form)
 @app.route('/register', methods=['GET', 'POST'])
 def kayit():
     form = RegisterForm(request.form)
@@ -121,9 +161,8 @@ def kayit():
             msg = True
         except sql.IntegrityError as e:
             con.rollback()
+            msg = False
             #'sqlite error: ', e.args[0]
-            msh = False
-
             #msg = "error in insert operation"
       
         finally:
@@ -172,7 +211,14 @@ def login():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-        return render_template("dashboard.html")
+    with sql.connect("./blog.db") as con:
+        cur = con.cursor()
+        cur.execute("select * from articles where author = ?", (session["username"],))
+        rows = cur.fetchall()
+        if rows != None:
+            return render_template("dashboard.html", rows = rows)
+        else:
+            return render_template("dashboard.html")
 #Logout
 @app.route("/logout")
 def logout():

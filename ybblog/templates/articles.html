@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block doldur %}
+<h3>Makaleler</h3><hr>
+{% if rows %}
+    <ul class="list-group">
+    {% for i in rows %}
+        <li class="list-group-item">{{i[0]}} : {{i[1]}}<br>{{i[4]}}</li>    
+    {% endfor %}
+    </ul>
+{% else %}
+<div class="alert alert-danger">Henüz yazı yok.</div>
+{% endif %}
+{% endblock doldur %}
