@@ -6,29 +6,29 @@
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="about">Hakkımda</a>
+                <a class="nav-link" href="/about">Hakkımda</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="articles">Makaleler</a>
+                <a class="nav-link" href="/articles">Makaleler</a>
             </li>
         </ul>
         <ul class="navbar-nav ml-auto">
             {% if session["logged_in"] %}
                 <li class="nav-item">
-                        <a class="nav-link" href="dashboard">Kontrol Paneli</a>
+                        <a class="nav-link" href="/dashboard">Kontrol Paneli</a>
                 </li>           
                 <li class="nav-item">
-                        <a class="nav-link" name="Giriş">Hoşgeldin {{session["username"]}}</a>
+                        <a class="nav-link" name="/Giriş">Hoşgeldin {{session["username"]}}</a>
                 </li>           
                 <li class="nav-item">
-                        <a class="nav-link" href="logout">Çıkış Yap</a>
+                        <a class="nav-link" href="/logout">Çıkış Yap</a>
                 </li>           
             {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="register">Kayıt ol</a>
+                    <a class="nav-link" href="/register">Kayıt ol</a>
                 </li>
                 <li class="nav-item">
-                        <a class="nav-link" href="login">Giriş Yapın</a>
+                        <a class="nav-link" href="/login">Giriş Yapın</a>
                 </li>
             {% endif %}
                 </ul>

@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block doldur %}
+{% if row %}
+<h2>{{ row[1] }}</h2>
+<p>{{ row[3]|safe }}</p>
+ {{ row[2] }} - {{ row[4] }}
+{% else %}
+<div class="alert alert-danger">Böyle bir makale bulunamadı ya da hiç olmamıştı.</div>
+{% endif %}
+
+
+{% endblock doldur %}
+

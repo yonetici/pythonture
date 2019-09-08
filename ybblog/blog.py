@@ -14,6 +14,11 @@ def login_required(f):
             flash("Bu sayfayı görüntüleme yetkiniz yok", "danger")
             return redirect(url_for("login"))
     return decorated_function
+#SEO URL
+def String_Url(string):
+    StringTitle  = re.sub("[^a-zA-Z0-9]+", " ", string)
+    addPlus = str(StringTitle.replace(" ", "-"))
+    return addPlus
 #kullanıcı kayıt formu
 class RegisterForm(Form):
     name = StringField("İsim Soyisim", validators=[validators.Length(min=4, max=25), validators.DataRequired()])
@@ -57,6 +62,55 @@ def index():
         {"id":3, "title":"DenemeTitle3","content":"DenemeContent3"}
     ]
     return render_template("index.html", numbers = numbers)
+
+@app.route("/edit/<int:post_id>", methods = ['GET', 'POST'])
+@login_required
+def edit_post(post_id):
+    if request.method == "GET":
+        with sql.connect("./blog.db") as con:
+            cur = con.cursor()
+            cur.execute("SELECT * from articles where author = ? and id = ?", (session["username"], post_id))
+            row = cur.fetchone()
+            if row != None:
+                form = ArticleForm()
+                form.title.data = row[1]
+                form.content.data = row[3]
+                return render_template("update.html", form = form)
+            else:
+                flash("Makale bulunamadı yahut bu işleme yetkiniz yok", "warning")
+                return redirect(url_for("index"))
+            con.close()
+    elif request.method == "POST":
+        form = ArticleForm(request.form)
+        newTitle = form.title.data
+        newContent = form.content.data
+        with sql.connect("./blog.db") as con:
+            cur = con.cursor()
+            cur.execute("UPDATE articles set title = ?, content = ? WHERE id = ? and author= ? ", (newTitle, newContent, post_id, session["username"]))
+            con.commit()
+            flash("Makale güncellendi","success")
+            return redirect(url_for("dashboard"))
+    else:
+        flash("Hatalı istek", "danger")
+        return redirect(url_for("dashboard"))
+@app.route("/search", methods = ["GET", "POST"])
+def search():
+    if request.method == "GET":
+        return redirect(url_for("index"))
+    else:
+        keyword = request.form.get("keyword")
+        with sql.connect("./blog.db") as con:
+            cur = con.cursor()
+            cur.execute("SELECT * from articles WHERE title LIKE ?", ('%'+ keyword +'%',))
+            rows = cur.fetchall()
+            if  articles != None:
+                flash(keyword + " için arama sonuçları")
+                return render_template("articles.html", rows = rows)
+            else:
+                flash("Sonuç bulunamadı", "warning")
+                return redirect(url_for("articles"))
+
+
 @app.route("/articles")
 def articles():
     with sql.connect("./blog.db") as con:
@@ -69,7 +123,38 @@ def articles():
         else:
             flash("Listelemede hata oluştu.", "warning")
             return render_template("articles.html")
-
+    cur.close()
+@app.route("/delete/<int:post_id>")
+@login_required
+def delete_post(post_id):
+    with sql.connect("./blog.db") as con:
+        cur = con.cursor()
+        cur.execute ("SELECT * from articles where author = ? and id = ?", (session["username"],post_id))
+        if cur.fetchone() != None:
+            cur.execute("DELETE from articles where id = ?", (post_id,))
+            con.commit()
+            flash("Makale silindi", "success")
+            return redirect(url_for("dashboard"))
+        else:
+            flash("Silinecek makale bulunamadı", "warning")
+            return redirect(url_for("dashboard"))
+    con.close()
+@app.route('/article/<int:post_id>')
+def show_post(post_id):
+    # show the post with the given id, the id is an integer
+    with sql.connect("./blog.db") as con:
+        cur = con.cursor()
+        cur.execute("SELECT * from articles where id = ?", (post_id,))
+        row = cur.fetchone()
+        if row != None:
+            return render_template("article.html", row = row)
+        else:
+            flash("Böyle bir makale bulunamadı ya da hiç olmamıştı.", "warning")
+            return render_template("article.html")
+    # try:
+    #     return 'Post %d' % post_id
+    # except:
+    #     return 'hatalı url girdiniz.'
 @app.route("/about")
 def about():
     return render_template("about.html")
@@ -79,13 +164,6 @@ def about():
 #         return 'Post %s' % escape id
 #     except:
 #         return 'hatalı url girdiniz.'
-@app.route('/article/<int:post_id>')
-def show_post(post_id):
-    # show the post with the given id, the id is an integer
-    try:
-        return 'Post %d' % post_id
-    except:
-        return 'hatalı url girdiniz.'
 @app.route('/user/<username>')
 def show_user_profile(username):
     # show the user profile for that user
@@ -126,6 +204,7 @@ def addarticle():
 
     else:
         return render_template("addarticle.html", form = form)
+
 @app.route('/register', methods=['GET', 'POST'])
 def kayit():
     form = RegisterForm(request.form)

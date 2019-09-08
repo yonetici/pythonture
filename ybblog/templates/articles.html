@@ -2,12 +2,16 @@
 
 {% block doldur %}
 <h3>Makaleler</h3><hr>
+<form action="/search" method="POST">
+<input type="text" name="keyword" class="input-sm" maxlength="64" placeholder="Ara" /><button type="submit" class="btn btn-danger">Ara..</button>
+<form>
+<hr>
 {% if rows %}
-    <ul class="list-group">
+<div class="list-group">
     {% for i in rows %}
-        <li class="list-group-item">{{i[0]}} : {{i[1]}}<br>{{i[4]}}</li>    
+        <a href="/article/{{ i[0] }}" class="list-group-item list-group-item-action disabled">{{i[1]}}</a>
     {% endfor %}
-    </ul>
+</div>
 {% else %}
 <div class="alert alert-danger">Henüz yazı yok.</div>
 {% endif %}
