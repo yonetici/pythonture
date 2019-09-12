@@ -1,0 +1,1 @@
+Flask ile hazırlanmış uygulama
